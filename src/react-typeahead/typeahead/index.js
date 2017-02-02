@@ -6,8 +6,9 @@ var React = window.React || require('react/addons');
 var TypeaheadSelector = require('./selector');
 var KeyEvent = require('../keyevent');
 var fuzzy = require('fuzzy');
-var DatePicker = require('../../react-datepicker/datepicker.js');
+var DatePicker = require('react-datetime');
 var moment = require('moment');
+var cx = require('classnames');
 
 /**
  * A "typeahead", an auto-completing text input
@@ -85,7 +86,8 @@ var Typeahead = React.createClass({
 
   setEntryText: function(value) {
     if (this.refs.entry != null) {
-      this.refs.entry.getDOMNode().value = value;
+      //this.refs.entry.getDOMNode().value = value;
+      this.refs['entry'].value = value;
     }
     this._onTextEntryUpdated();
   },
@@ -114,7 +116,8 @@ var Typeahead = React.createClass({
   },
 
   _onOptionSelected: function(option) {
-    var nEntry = this.refs.entry.getDOMNode();
+    //var nEntry = this.refs.entry.getDOMNode();
+    var nEntry = this.refs['entry'];
     nEntry.focus();
     nEntry.value = option;
     this.setState({visible: this.getOptionsForValue(option, this.state.options),
@@ -127,11 +130,16 @@ var Typeahead = React.createClass({
   _onTextEntryUpdated: function() {
     var value = "";
     if (this.refs.entry != null) {
-      value = this.refs.entry.getDOMNode().value;
+      //value = this.refs.entry.getDOMNode().value;
+      value = this.refs['entry'].value;
     }
     this.setState({visible: this.getOptionsForValue(value, this.state.options),
                    selection: null,
                    entryValue: value});
+  },
+
+  _onClick: function(){
+    this.setState({visible: this.getOptionsForValue(this.props.defaultValue, this.props.options)});
   },
 
   _onEnter: function(event) {
@@ -143,7 +151,9 @@ var Typeahead = React.createClass({
   },
 
   _onEscape: function() {
-    this.refs.sel.setSelectionIndex(null)
+    this.refs.sel.setSelectionIndex(null);
+    this.refs['entry'].blur();
+    this.setState({visible:'', focused: false});
   },
 
   _onTab: function(event) {
@@ -236,13 +246,15 @@ var Typeahead = React.createClass({
   render: function() {
     var inputClasses = {}
     inputClasses[this.props.customClasses.input] = !!this.props.customClasses.input;
-    var inputClassList = React.addons.classSet(inputClasses)
+    //var inputClassList = React.addons.classSet(inputClasses)
+    var inputClassList = cx(inputClasses)
 
     var classes = {
       typeahead: true
     }
     classes[this.props.className] = !!this.props.className;
-    var classList = React.addons.classSet(classes);
+    //var classList = React.addons.classSet(classes);
+    var classList = cx(classes);
 
     if (this._showDatePicker()) {
       return (
@@ -258,6 +270,7 @@ var Typeahead = React.createClass({
           placeholder={this.props.placeholder}
           className={inputClassList} defaultValue={this.state.entryValue}
           onChange={this._onTextEntryUpdated} onKeyDown={this._onKeyDown}
+          onClick={this._onClick}
           />
         { this._renderIncrementalSearchResults() }
       </span>

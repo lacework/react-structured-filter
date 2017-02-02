@@ -6,7 +6,7 @@ var React = window.React || require('react');
 var Token = require('./token');
 var KeyEvent = require('../keyevent');
 var Typeahead = require('../typeahead');
-
+var cx = require('classnames');
 /**
  * A typeahead that, when an option is selected, instead of simply filling
  * the text entry widget, prepends a renderable "token", that may be deleted
@@ -20,15 +20,24 @@ var TypeaheadTokenizer = React.createClass({
     defaultValue: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     onTokenRemove: React.PropTypes.func,
-    onTokenAdd: React.PropTypes.func
+    onTokenAdd: React.PropTypes.func,
+    value: React.PropTypes.array
   },
 
   getInitialState: function() {
     return {
-      selected: this.props.defaultSelected,
+      //selected: this.props.defaultSelected,
+      selected: this.getStateFromProps(this.props),
       category: "",
-      operator: ""
+      operator: "",
+      categoryType: "",
+      errorMsg: null
     };
+  },
+
+  getStateFromProps( props ) {
+    const value = props.value || props.defaultValue || [];
+    return value.slice( 0 );
   },
 
   getDefaultProps: function() {
@@ -38,6 +47,7 @@ var TypeaheadTokenizer = React.createClass({
       customClasses: {},
       defaultValue: "",
       placeholder: "",
+      value: [],
       onTokenAdd: function() {},
       onTokenRemove: function() {}
     };
@@ -48,9 +58,10 @@ var TypeaheadTokenizer = React.createClass({
   _renderTokens: function() {
     var tokenClasses = {}
     tokenClasses[this.props.customClasses.token] = !!this.props.customClasses.token;
-    var classList = React.addons.classSet(tokenClasses);
+    //var classList = React.addons.classSet(tokenClasses);
+    var classList = cx(tokenClasses);
     var result = this.state.selected.map(function(selected) {
-      mykey = selected.category + selected.operator + selected.value;
+      let mykey = selected.category + selected.operator + selected.value;
 
       return (
         <Token key={mykey} className={classList}
@@ -71,17 +82,21 @@ var TypeaheadTokenizer = React.createClass({
       }
       return categories;
     } else if (this.state.operator=="") {
-      categoryType = this._getCategoryType();
+      let categoryType = this._getCategoryType();
 
-      if (categoryType == "text") { return ["==", "!=", "contains", "!contains"];}
-      else if (categoryType == "textoptions") {return ["==", "!="];}
-      else if  (categoryType == "number" || categoryType == "date") {return ["==", "!=", "<", "<=", ">", ">="];}
+      // if (categoryType == "text") { return ["==", "!=", "contains", "!contains"];}
+      // else if (categoryType == "textoptions") {return ["==", "!="];}
+      // else if  (categoryType == "number" || categoryType == "date") {return ["==", "!=", "<", "<=", ">", ">="];}
+      if (categoryType == "String" || categoryType == "ipaddr" ||
+          categoryType == "keyValue") { return ["includes", "excludes"]; }
+      else if (categoryType == "Number") { return ["includes", "excludes"]; }
       else {console.log("WARNING: Unknown category type in tokenizer");};
 
     } else {
       var options = this._getCategoryOptions();
       if (options == null) return []
-      else return options();
+      else return options;
+      //else return options();
     }
 
     return this.props.options;
@@ -89,7 +104,8 @@ var TypeaheadTokenizer = React.createClass({
 
   _getHeader: function() {
     if (this.state.category=="") {
-      return "Category";
+      //return "Category";
+      return "Filters";
     } else if (this.state.operator=="") {
       return "Operator";
     } else {
@@ -102,7 +118,7 @@ var TypeaheadTokenizer = React.createClass({
   _getCategoryType: function() {
     for (var i = 0; i < this.props.options.length; i++) {
       if (this.props.options[i].category == this.state.category) {
-        categoryType = this.props.options[i].type;
+        let categoryType = this.props.options[i].type;
         return categoryType;
       }
     }
@@ -125,7 +141,8 @@ var TypeaheadTokenizer = React.createClass({
 
     // Remove token ONLY when bksp pressed at beginning of line
     // without a selection
-    var entry = this.refs.typeahead.inputRef().getDOMNode();
+    //var entry = this.refs.typeahead.inputRef().getDOMNode();
+    var entry = this.refs['typeahead'].inputRef();
     if (entry.selectionStart == entry.selectionEnd &&
         entry.selectionStart == 0)
     {
@@ -144,6 +161,38 @@ var TypeaheadTokenizer = React.createClass({
       }
       event.preventDefault();
     }
+  },
+
+  _validateEntry(type, value){
+    let response = {};
+    switch(type) {
+      case 'Number':
+        if (/^([0-9]+)$/.test(value)) {
+          response.status = true;
+        } else {
+          response.message = 'Only numbers permitted';
+          response.status = false;
+        }
+      break;
+
+      case 'String':
+        response.status = true;
+      break;
+
+      case 'keyValue':
+        response.status = true;
+      break;
+
+      case 'ipaddr':
+        if (/^([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})(\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})){3}$/.test(value)) {
+          response.status = true;
+        } else {
+          response.message = 'Invalid IPv4 address format';
+          response.status = false;
+        }
+      break;
+    }
+    return response;
   },
 
   _removeTokenForValue: function(value) {
@@ -167,20 +216,24 @@ var TypeaheadTokenizer = React.createClass({
     }
 
     if (this.state.operator == "") {
-      this.setState({operator: value});
+      let categoryType = this._getCategoryType();
+      this.setState({operator: value, categoryType: categoryType});
       this.refs.typeahead.setEntryText("");
       return;
     }
 
-    value = {"category":this.state.category,"operator":this.state.operator,"value":value};
+    let isValidEntry = this._validateEntry(this.state.categoryType, value);
+    if(isValidEntry.status == true) {
+      value = {"category":this.state.category,"operator":this.state.operator,"value":value};
 
-    this.state.selected.push(value);
-    this.setState({selected: this.state.selected});
-    this.refs.typeahead.setEntryText("");
-    this.props.onTokenAdd(this.state.selected);
-
-    this.setState({category: "", operator: ""});
-
+      this.state.selected.push(value);
+      this.setState({selected: this.state.selected, errorMsg: null});
+      this.refs.typeahead.setEntryText("");
+      this.props.onTokenAdd(this.state.selected);
+      this.setState({category: "", operator: ""});
+    } else {
+      this.setState({errorMsg: isValidEntry.message});
+    }
     return;
   },
 
@@ -198,34 +251,40 @@ var TypeaheadTokenizer = React.createClass({
   render: function() {
     var classes = {}
     classes[this.props.customClasses.typeahead] = !!this.props.customClasses.typeahead;
-    var classList = React.addons.classSet(classes);
+    //var classList = React.addons.classSet(classes);
+    var classList = cx(classes);
+    var showErrorMsg = null;
+    if(this.state.errorMsg) {
+      showErrorMsg = (<span className="tooltip bottom left">{this.state.errorMsg}</span>);
+
+    }
     return (
-      <div className="filter-tokenizer">
-        <span className="input-group-addon">
-          <i className="fa fa-search"></i>
-        </span>
-        <div className="token-collection">
-          { this._renderTokens() }
+        <div className="filter-tokenizer">
+            {/*<span className="input-group-addon">
+            <i className="fa fa-search"></i>
+            </span>*/}
+            <div className="token-collection">
+                { this._renderTokens() }
 
-          <div className="filter-input-group">
-            <div className="filter-category">{ this.state.category } </div>
-            <div className="filter-operator">{ this.state.operator } </div>
-
-            <Typeahead ref="typeahead"
-              className={classList}
-              placeholder={this.props.placeholder}
-              customClasses={this.props.customClasses}
-              options={this._getOptionsForTypeahead()}
-              header={this._getHeader()}
-              datatype={this._getInputType()}
-              defaultValue={this.props.defaultValue}
-              onOptionSelected={this._addTokenForValue}
-              onKeyDown={this._onKeyDown} />
+                <div className="filter-input-group">
+                    <div className="filter-category">{ this.state.category }</div>
+                    <div className="filter-operator">{ this.state.operator }</div>
+                    <Typeahead ref="typeahead"
+                    className={classList}
+                    placeholder={this.props.placeholder}
+                    customClasses={this.props.customClasses}
+                    options={this._getOptionsForTypeahead()}
+                    header={this._getHeader()}
+                    datatype={this._getInputType()}
+                    defaultValue={this.props.defaultValue}
+                    onOptionSelected={this._addTokenForValue}
+                    onKeyDown={this._onKeyDown} />
+                {showErrorMsg}
+                </div>
             </div>
-          </div>
-      </div>
+        </div>
     )
-  }
+    }
 });
 
 module.exports = TypeaheadTokenizer;

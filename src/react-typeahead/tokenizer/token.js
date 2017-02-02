@@ -28,10 +28,10 @@ var Token = React.createClass({
       return "";
     }
     return (
-      <a className="typeahead-token-close" href="#" onClick={function(event) {
+      <a className="typeahead-token-close icon-cancel-circled" href="#" onClick={function(event) {
           this.props.onRemove(this.props.children);
           event.preventDefault();
-        }.bind(this)}>&#x00d7;</a>
+        }.bind(this)}></a>
     );
   }
 });
