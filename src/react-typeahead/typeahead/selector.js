@@ -2,17 +2,19 @@
 var React = require('react');
 var TypeaheadOption = require('./option');
 var cx = require('classnames');
+var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 /**
  * Container for the options rendered as part of the autocompletion process
  * of the typeahead
  */
-var TypeaheadSelector = React.createClass({
+var TypeaheadSelector = createReactClass({
     propTypes: {
-        options: React.PropTypes.array,
-        header: React.PropTypes.string,
-        customClasses: React.PropTypes.object,
-        selectionIndex: React.PropTypes.number,
-        onOptionSelected: React.PropTypes.func
+        options: PropTypes.array,
+        header: PropTypes.string,
+        customClasses: PropTypes.object,
+        selectionIndex: PropTypes.number,
+        onOptionSelected: PropTypes.func
     },
 
     getDefaultProps: function() {

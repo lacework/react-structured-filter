@@ -7,23 +7,25 @@ var DatePicker = require('react-datetime');
 var moment = require('moment');
 var cx = require('classnames');
 var onClickOutside = require('react-onclickoutside');
+var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 /**
  * A "typeahead", an auto-completing text input
  *
  * Renders an text input that shows options nearby that you can use the
  * keyboard or mouse to select.  Requires CSS for MASSIVE DAMAGE.
  */
-var Typeahead = onClickOutside(React.createClass({
+var Typeahead = onClickOutside(createReactClass({
     propTypes: {
-        customClasses: React.PropTypes.object,
-        maxVisible: React.PropTypes.number,
-        options: React.PropTypes.array,
-        header: React.PropTypes.string,
-        datatype: React.PropTypes.string,
-        defaultValue: React.PropTypes.string,
-        placeholder: React.PropTypes.string,
-        onOptionSelected: React.PropTypes.func,
-        onKeyDown: React.PropTypes.func
+        customClasses: PropTypes.object,
+        maxVisible: PropTypes.number,
+        options: PropTypes.array,
+        header: PropTypes.string,
+        datatype: PropTypes.string,
+        defaultValue: PropTypes.string,
+        placeholder: PropTypes.string,
+        onOptionSelected: PropTypes.func,
+        onKeyDown: PropTypes.func
     },
 
     // mixins: [

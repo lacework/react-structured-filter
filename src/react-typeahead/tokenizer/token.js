@@ -1,13 +1,15 @@
 var React = require('react');
+var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 
 /**
  * Encapsulates the rendering of an option that has been "selected" in a
  * TypeaheadTokenizer
  */
-var Token = React.createClass({
+var Token = createReactClass({
     propTypes: {
-        children: React.PropTypes.object,
-        onRemove: React.PropTypes.func
+        children: PropTypes.object,
+        onRemove: PropTypes.func
     },
 
     render: function() {

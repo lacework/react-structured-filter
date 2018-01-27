@@ -3,21 +3,23 @@ var Token = require('./token');
 var KeyEvent = require('../keyevent');
 var Typeahead = require('../typeahead');
 var cx = require('classnames');
+var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 /**
  * A typeahead that, when an option is selected, instead of simply filling
  * the text entry widget, prepends a renderable "token", that may be deleted
  * by pressing backspace on the beginning of the line with the keyboard.
  */
-var TypeaheadTokenizer = React.createClass({
+var TypeaheadTokenizer = createReactClass({
     propTypes: {
-        options: React.PropTypes.array,
-        customClasses: React.PropTypes.object,
-        defaultSelected: React.PropTypes.array,
-        defaultValue: React.PropTypes.string,
-        placeholder: React.PropTypes.string,
-        onTokenRemove: React.PropTypes.func,
-        onTokenAdd: React.PropTypes.func,
-        value: React.PropTypes.array
+        options: PropTypes.array,
+        customClasses: PropTypes.object,
+        defaultSelected: PropTypes.array,
+        defaultValue: PropTypes.string,
+        placeholder: PropTypes.string,
+        onTokenRemove: PropTypes.func,
+        onTokenAdd: PropTypes.func,
+        value: PropTypes.array
     },
 
     getInitialState: function() {
