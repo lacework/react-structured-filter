@@ -16059,7 +16059,7 @@ var TypeaheadTokenizer = createReactClass({
             return React.createElement(
                 Token,
                 { key: mykey, className: classList,
-                    'data-onRemove': this._removeTokenForValue },
+                    'data-onremove': this._removeTokenForValue },
                 selected
             );
         }, this);
@@ -16351,11 +16351,11 @@ var Token = createReactClass({
     },
 
     _makeCloseButton: function _makeCloseButton() {
-        if (!this.props['data-onRemove']) {
+        if (!this.props['data-onremove']) {
             return "";
         }
         return React.createElement('a', { className: 'typeahead-token-close icon-cancel-circled', href: '#', onClick: (function (event) {
-                this.props['data-onRemove'](this.props.children);
+                this.props['data-onremove'](this.props.children);
                 event.preventDefault();
             }).bind(this) });
     }

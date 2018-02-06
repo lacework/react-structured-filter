@@ -23,12 +23,12 @@ var Token = createReactClass({
     },
 
     _makeCloseButton: function() {
-        if (!this.props['data-onRemove']) {
+        if (!this.props['data-onremove']) {
             return "";
         }
         return (
             <a className="typeahead-token-close icon-cancel-circled" href="#" onClick={function(event) {
-                this.props['data-onRemove'](this.props.children);
+                this.props['data-onremove'](this.props.children);
                 event.preventDefault();
             }.bind(this)}></a>
         );
