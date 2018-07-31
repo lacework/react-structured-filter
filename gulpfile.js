@@ -7,34 +7,46 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
 var concat = require('gulp-concat');
+var babelify = require('babelify');
+var uglify = require('gulp-uglify');
+var notify = require('gulp-notify');
+var streamify = require('gulp-streamify');
 
-// This code is largely from: http://christianalfoni.github.io/javascript/2014/08/15/react-js-workflow.html
-gulp.task('browserify', function() {
-  var bundler = browserify({
-    entries: ['./example/main.js'], // Only need initial file, browserify finds the deps
-    transform: [reactify], // We want to convert JSX to normal javascript
-    debug: true, // Gives us sourcemapping
-    cache: {}, packageCache: {},
-    fullPaths: true, // Requirement of watchify
-    paths: ['./node_modules','./example','./src']
-  });
-  var watcher  = watchify(bundler);
-
-  return watcher
-  .on('update', function () { // When any files update
-    var updateStart = Date.now();
-    console.log('Updating!');
-    watcher.bundle() // Create new bundle that uses the cache for high performance
-    .pipe(source('main.js'))
-    // This is where you add uglifying etc.
-    .pipe(gulp.dest('example/demo'));
-    console.log('Updated!', (Date.now() - updateStart) + 'ms');
+// gulp.task('browserifyWatchless', function(){
+//   browserify({
+//     entries: ['./src/main.jsx'],
+//     transform: [babelify]
+//   })
+//     .bundle()
+//     .pipe(source('react-structured-filter.js'))
+//     .pipe(streamify(uglify()))
+//     .pipe(gulp.dest('./build'));
+// });
+// // This code is largely from: http://christianalfoni.github.io/javascript/2014/08/15/react-js-workflow.html
+// gulp.task('browserify', function() {
+// browserify({
+//     entries: ['./src/main.js'], // Only need initial file, browserify finds the deps
+//     transform: [babelify], // We want to convert JSX to normal javascript
+//     debug: true, // Gives us sourcemapping
+//     cache: {}, packageCache: {},
+//     // fullPaths: true, // Requirement of watchify
+//     paths: ['./node_modules','./src']
+//   })
+//   .bundle() // Create the initial bundle when starting the task
+//   .pipe(source('react-structured-filter.js'))
+//   .pipe(gulp.dest('./build'));
+// });
+gulp.task('build', function() {
+  browserify({
+    entries: ['./src/main.js'],
+    transform: [babelify],
+    debug: true
   })
-  .bundle() // Create the initial bundle when starting the task
-  .pipe(source('main.js'))
-  .pipe(gulp.dest('example/demo'));
+  .bundle()
+  .pipe(source('structured-filter.js'))
+  //.pipe(streamify(uglify()))
+  .pipe(gulp.dest('./build'));
 });
 
-
 // Just running the two tasks
-gulp.task('default', ['browserify']);
+gulp.task('default', ['build']);
