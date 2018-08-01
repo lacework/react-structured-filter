@@ -16414,7 +16414,7 @@ var TypeaheadOption = createReactClass({
             { className: classList, onClick: this._onClick },
             React.createElement(
                 'a',
-                { href: '#', className: this._getClasses(), ref: 'anchor' },
+                { className: this._getClasses(), ref: 'anchor' },
                 this.props.children
             )
         );
