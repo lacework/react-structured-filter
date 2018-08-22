@@ -281,8 +281,6 @@ var TypeaheadTokenizer = createReactClass({
                  <i className="fa fa-search"></i>
                  </span>*/}
               <div className="token-collection">
-                  { this._renderTokens() }
-
                 <div className="filter-input-group">
                   <div className="filter-category">{ this.state.category }</div>
                   <div className="filter-operator">{ this.state.operator }</div>
@@ -298,6 +296,9 @@ var TypeaheadTokenizer = createReactClass({
                              onKeyDown={this._onKeyDown} />
                     {showErrorMsg}
                 </div>
+                  <div className="tokens">
+                      { this._renderTokens() }
+                  </div>
               </div>
             </div>
         )

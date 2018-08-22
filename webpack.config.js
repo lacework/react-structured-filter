@@ -16,9 +16,9 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
-                // options: {
-                //     presets: ["react"]
-                // },
+                 options: {
+                     presets: ["react"]
+                 },
                 include: path.resolve( __dirname, 'src' ),
                 exclude: /node_modules/
             }

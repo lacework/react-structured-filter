@@ -26,22 +26,23 @@
     "gulp-watch": "*",
     "moment": "*",
     "prop-types": "^15.6.0",
-    "react": "0.14.8",
-    "react-addons-create-fragment": "0.14.8",
-    "react-addons-css-transition-group": "0.14.8",
+    "react": "16.2.0",
+    "react-addons-create-fragment": "15.6.2",
+    "react-addons-css-transition-group": "15.6.2",
     "react-async": "^2.0.1",
     "react-bootstrap": "*",
     "react-datetime": "2.12.0",
-    "react-dom": "0.14.8",
+    "react-dom": "16.2.0",
     "react-onclickoutside": "5.11.x",
     "reactify": "git://github.com/andreypopp/reactify.git#v0.16.0",
     "reqwest": "*",
     "tether": "*",
     "vinyl-source-stream": "*",
-    "watchify": "*",
-    "webpack": "^2.4.1"
+    "watchify": "*"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "webpack": "^2.7.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
