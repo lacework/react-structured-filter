@@ -83,6 +83,7 @@ var Typeahead = React.createClass({
 
     if (result && result.length == 0 && options && options.length !== 0) {
       alert("Please select or enter valid text for filtering...");
+      return false;
     }
 
     return result;
@@ -137,7 +138,7 @@ var Typeahead = React.createClass({
       // value = this.refs.entry.getDOMNode().value;
       value = this.refs['entry'].value;
     }
-    if (this.getOptionsForValue(value, this.state.options).length === 0) {
+    if (this.getOptionsForValue(value, this.state.options) === false) {
       this.refs['entry'].value = value.substring(0, value.length-1);
       return;
     }
