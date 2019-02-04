@@ -80,12 +80,18 @@ var Typeahead = React.createClass({
     if (this.props.maxVisible) {
       result = result.slice(0, this.props.maxVisible);
     }
+
+    if (result && result.length == 0 && options && options.length !== 0) {
+      alert("Please select or enter valid text for filtering...");
+    }
+
     return result;
   },
 
   setEntryText: function(value) {
     if (this.refs.entry != null) {
-      this.refs.entry.getDOMNode().value = value;
+      // this.refs.entry.getDOMNode().value = value;
+      this.refs['entry'].value = value;
     }
     this._onTextEntryUpdated();
   },
@@ -114,7 +120,8 @@ var Typeahead = React.createClass({
   },
 
   _onOptionSelected: function(option) {
-    var nEntry = this.refs.entry.getDOMNode();
+    // var nEntry = this.refs.entry.getDOMNode();
+    var nEntry = this.refs['entry'];
     nEntry.focus();
     nEntry.value = option;
     this.setState({visible: this.getOptionsForValue(option, this.state.options),
@@ -127,7 +134,12 @@ var Typeahead = React.createClass({
   _onTextEntryUpdated: function() {
     var value = "";
     if (this.refs.entry != null) {
-      value = this.refs.entry.getDOMNode().value;
+      // value = this.refs.entry.getDOMNode().value;
+      value = this.refs['entry'].value;
+    }
+    if (this.getOptionsForValue(value, this.state.options).length === 0) {
+      this.refs['entry'].value = value.substring(0, value.length-1);
+      return;
     }
     this.setState({visible: this.getOptionsForValue(value, this.state.options),
                    selection: null,
