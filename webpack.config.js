@@ -4,15 +4,16 @@ var path = require( 'path' );
 module.exports = {
     entry: './src/main.js',
     devtool: 'source-map',
+    mode: 'none',
     output: {
         path: __dirname,
         filename: 'react-structured-filter.js',
         library: 'react-structured-filter',
         libraryTarget: 'umd',
-        umdNamedDefine: true
+        umdNamedDefine: true,
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.(js|jsx)$/,
                 loader: 'babel-loader',

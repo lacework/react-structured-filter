@@ -81,13 +81,9 @@ var TypeaheadTokenizer = createReactClass({
             return categories;
         } else if (this.state.operator=="") {
             let categoryType = this._getCategoryType();
-
-            // if (categoryType == "text") { return ["==", "!=", "contains", "!contains"];}
-            // else if (categoryType == "textoptions") {return ["==", "!="];}
-            // else if  (categoryType == "number" || categoryType == "date") {return ["==", "!=", "<", "<=", ">", ">="];}
-            if (categoryType == "String" || categoryType == "ipaddr" ||
-                categoryType == "keyValue") { return ["includes", "excludes"]; }
-            else if (categoryType == "Number") { return ["includes", "excludes"]; }
+            if (categoryType == "String" || categoryType == "ipaddr") { return ["matches", "includes", "excludes", "starts with", "ends with", "does not match"]; }
+            else if(categoryType == "keyValue") {return ["matches", "does not match"];}
+            else if (categoryType == "Number") { return ["matches", "includes", "excludes", "starts with", "ends with", "does not match"]; }
             else {console.log("WARNING: Unknown category type in tokenizer");};
 
         } else {
@@ -161,7 +157,7 @@ var TypeaheadTokenizer = createReactClass({
         }
     },
 
-    _validateEntry(type, value){
+    _validateEntry(type, opr, value){
         let response = {};
 
         if(type !== 'keyValue') {
@@ -191,7 +187,7 @@ var TypeaheadTokenizer = createReactClass({
                 break;
 
             case 'ipaddr':
-                if(value.includes('*')) {
+                if(value.includes('*') || !['matches', 'does not match'].includes(opr)) {
                     response.status = true;
                 } else if (/^([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})(\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})){3}$/.test(value)) {
                     response.status = true;
@@ -233,7 +229,7 @@ var TypeaheadTokenizer = createReactClass({
             return;
         }
 
-        let isValidEntry = this._validateEntry(this.state.categoryType, value);
+        let isValidEntry = this._validateEntry(this.state.categoryType, this.state.operator, value);
         if(isValidEntry.status == true) {
             value = {"category":this.state.category,"operator":this.state.operator,"value":value};
 
