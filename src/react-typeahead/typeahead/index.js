@@ -15,6 +15,7 @@ var createReactClass = require('create-react-class');
  * Renders an text input that shows options nearby that you can use the
  * keyboard or mouse to select.  Requires CSS for MASSIVE DAMAGE.
  */
+
 var Typeahead = onClickOutside(createReactClass({
     propTypes: {
         customClasses: PropTypes.object,
