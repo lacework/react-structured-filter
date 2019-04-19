@@ -19709,12 +19709,10 @@ var TypeaheadTokenizer = createReactClass({
             return categories;
         } else if (this.state.operator == "") {
             let categoryType = this._getCategoryType();
-            if (categoryType == "String" || categoryType == "ipaddr") {
+            if (categoryType == "String" || categoryType == "ipaddr" || categoryType == "Number") {
                 return ["matches", "includes", "excludes", "starts with", "ends with", "does not match"];
             } else if (categoryType == "keyValue") {
                 return ["matches", "does not match"];
-            } else if (categoryType == "Number") {
-                return ["matches", "includes", "excludes", "starts with", "ends with", "does not match"];
             } else {
                 console.log("WARNING: Unknown category type in tokenizer");
             };
