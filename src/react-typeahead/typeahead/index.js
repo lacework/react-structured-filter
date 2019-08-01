@@ -83,7 +83,8 @@ var Typeahead = onClickOutside(createReactClass({
         }
 
         if(result && result.length == 0 && options && options.length !== 0) {
-            alert("Please select or enter valid text for filtering...");
+            //alert("Please select or enter valid text for filtering...");
+            this.props.setErrorMsg("Please select or enter valid text for filtering");
             return false;
         }
 

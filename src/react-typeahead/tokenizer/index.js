@@ -260,6 +260,17 @@ var TypeaheadTokenizer = createReactClass({
         }
     },
 
+    _setErrorMsg : function(err) {
+        if(err) {
+            this.setState({errorMsg: err});
+            setTimeout(
+                function(self) { self.setState({errorMsg: undefined}); },
+                3000,
+                this
+            );
+        }
+    },
+
     render: function() {
         var classes = {}
         classes[this.props.customClasses.typeahead] = !!this.props.customClasses.typeahead;
@@ -288,7 +299,8 @@ var TypeaheadTokenizer = createReactClass({
                              datatype={this._getInputType()}
                              defaultValue={this.props.defaultValue}
                              onOptionSelected={this._addTokenForValue}
-                             onKeyDown={this._onKeyDown} />
+                             onKeyDown={this._onKeyDown}
+                             setErrorMsg={this._setErrorMsg}/>
                     {showErrorMsg}
                 </div>
                   <div className="tokens">

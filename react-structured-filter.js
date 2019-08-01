@@ -142,6 +142,7 @@ var createReactClass = __webpack_require__(15);
  * Renders an text input that shows options nearby that you can use the
  * keyboard or mouse to select.  Requires CSS for MASSIVE DAMAGE.
  */
+
 var Typeahead = onClickOutside(createReactClass({
     displayName: 'Typeahead',
 
@@ -213,7 +214,8 @@ var Typeahead = onClickOutside(createReactClass({
         }
 
         if (result && result.length == 0 && options && options.length !== 0) {
-            alert("Please select or enter valid text for filtering...");
+            //alert("Please select or enter valid text for filtering...");
+            this.props.setErrorMsg("Please select or enter valid text for filtering");
             return false;
         }
 
@@ -19883,6 +19885,15 @@ var TypeaheadTokenizer = createReactClass({
         }
     },
 
+    _setErrorMsg: function (err) {
+        if (err) {
+            this.setState({ errorMsg: err });
+            setTimeout(function (self) {
+                self.setState({ errorMsg: undefined });
+            }, 3000, this);
+        }
+    },
+
     render: function () {
         var classes = {};
         classes[this.props.customClasses.typeahead] = !!this.props.customClasses.typeahead;
@@ -19924,7 +19935,8 @@ var TypeaheadTokenizer = createReactClass({
                         datatype: this._getInputType(),
                         defaultValue: this.props.defaultValue,
                         onOptionSelected: this._addTokenForValue,
-                        onKeyDown: this._onKeyDown }),
+                        onKeyDown: this._onKeyDown,
+                        setErrorMsg: this._setErrorMsg }),
                     showErrorMsg
                 ),
                 React.createElement(
