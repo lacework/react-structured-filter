@@ -19813,9 +19813,16 @@ var TypeaheadTokenizer = createReactClass({
                 break;
 
             case 'ipaddr':
-                if (value.includes('*') || !['matches', 'does not match'].includes(opr)) {
+                const testValue = value.split('.');
+                let result = true;
+                testValue.forEach(t => {
+                    if (!(testValue.length <= 4 && t.length <= 3 && (/^[\d\*]{1,3}$/.test(t) || /^[\d]{1,3}$/.test(t) && t <= 255))) result = false;
+                });
+                if (value.includes('*') && result) {
                     response.status = true;
-                } else if (/^([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})(\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})){3}$/.test(value)) {
+                } else if (['includes', 'excludes', 'starts with', 'ends with'].includes(opr) && result) {
+                    response.status = true;
+                } else if (['matches', 'does not match'].includes(opr) && /^([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})(\.([2][5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9]{1,2})){3}$/.test(value)) {
                     response.status = true;
                 } else {
                     response.message = 'Invalid IPv4 address format';
