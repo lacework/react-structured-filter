@@ -14,6 +14,7 @@ var TypeaheadTokenizer = createReactClass({
     propTypes: {
         options: PropTypes.array,
         customClasses: PropTypes.object,
+        customErrors: PropTypes.object,
         defaultSelected: PropTypes.array,
         defaultValue: PropTypes.string,
         placeholder: PropTypes.string,
@@ -244,7 +245,7 @@ var TypeaheadTokenizer = createReactClass({
             value = {"category":this.state.category,"operator":this.state.operator,"value":value};
 
             this.state.selected.push(value);
-            this.setState({selected: this.state.selected, errorMsg: null});
+            this.setState({selected: this.state.selected, errorMsg: null, dropdownError: false});
             //this.refs.typeahead.setEntryText("");
             this._typeahead.getInstance().setEntryText("");
             this.props.onTokenAdd(this.state.selected);
@@ -252,7 +253,7 @@ var TypeaheadTokenizer = createReactClass({
         } else {
             this.setState({errorMsg: isValidEntry.message});
             setTimeout(
-                function(self) { self.setState({errorMsg: undefined}); },
+                function(self) { self.setState({errorMsg: undefined, dropdownError: false}); },
                 3000,
                 this
             );
@@ -271,15 +272,8 @@ var TypeaheadTokenizer = createReactClass({
         }
     },
 
-    _setErrorMsg : function(err) {
-        if(err) {
-            this.setState({errorMsg: err});
-            setTimeout(
-                function(self) { self.setState({errorMsg: undefined}); },
-                3000,
-                this
-            );
-        }
+    _setErrorMsg : function(err, dropdownError = false) {
+        this.setState({errorMsg: err, dropdownError});
     },
 
     render: function() {
@@ -288,7 +282,7 @@ var TypeaheadTokenizer = createReactClass({
         //var classList = React.addons.classSet(classes);
         var classList = cx(classes);
         var showErrorMsg = null;
-        if(this.state.errorMsg) {
+        if(this.state.errorMsg && !this.state.dropdownError) {
             showErrorMsg = (<span className="tooltip bottom left">{this.state.errorMsg}</span>);
 
         }
@@ -305,13 +299,15 @@ var TypeaheadTokenizer = createReactClass({
                              className={classList}
                              placeholder={this.props.placeholder}
                              customClasses={this.props.customClasses}
+                             customErrors={this.props.customErrors}
                              options={this._getOptionsForTypeahead()}
                              header={this._getHeader()}
                              datatype={this._getInputType()}
                              defaultValue={this.props.defaultValue}
                              onOptionSelected={this._addTokenForValue}
                              onKeyDown={this._onKeyDown}
-                             setErrorMsg={this._setErrorMsg}/>
+                             setErrorMsg={this._setErrorMsg}
+                             errorMsg={this.state.errorMsg}/>
                     {showErrorMsg}
                 </div>
                   <div className="tokens">

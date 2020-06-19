@@ -26,6 +26,12 @@ module.exports = {
         ]
     },
     externals: {
+        underscore: {
+            root: '_',
+            commonjs: 'underscore',
+            commonjs2: 'underscore',
+            amd: 'underscore',
+        },
         'react-dom': {
             root: 'ReactDOM',
             commonjs: 'react-dom',

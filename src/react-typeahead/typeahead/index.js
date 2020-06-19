@@ -9,6 +9,7 @@ var cx = require('classnames');
 var onClickOutside = require('react-onclickoutside');
 var PropTypes = require('prop-types');
 var createReactClass = require('create-react-class');
+var _ = require('underscore');
 /**
  * A "typeahead", an auto-completing text input
  *
@@ -19,6 +20,8 @@ var createReactClass = require('create-react-class');
 var Typeahead = onClickOutside(createReactClass({
     propTypes: {
         customClasses: PropTypes.object,
+        customErrors: PropTypes.object,
+        errorMsg: PropTypes.string,
         maxVisible: PropTypes.number,
         options: PropTypes.array,
         header: PropTypes.string,
@@ -39,6 +42,7 @@ var Typeahead = onClickOutside(createReactClass({
             header: "Category",
             datatype: "text",
             customClasses: {},
+            customErrors: {},
             defaultValue: "",
             placeholder: "",
             onKeyDown: function(event) { return },
@@ -67,10 +71,13 @@ var Typeahead = onClickOutside(createReactClass({
     },
 
     componentWillReceiveProps: function(nextProps) {
-        this.setState({options: nextProps.options,
-            header: nextProps.header,
-            datatype: nextProps.datatype,
-            visible: nextProps.options});
+        if (!_.isEqual(nextProps.options, this.props.options) ||
+            !_.isEqual(nextProps.datatype, this.props.datatype)) {
+            this.setState({options: nextProps.options,
+                header: nextProps.header,
+                datatype: nextProps.datatype,
+                visible: nextProps.options.length === 0 ? false : nextProps.options});
+        }
     },
 
     getOptionsForValue: function(value, options) {
@@ -83,11 +90,14 @@ var Typeahead = onClickOutside(createReactClass({
         }
 
         if(result && result.length == 0 && options && options.length !== 0) {
-            //alert("Please select or enter valid text for filtering...");
-            this.props.setErrorMsg("Please select or enter valid text for filtering");
+            this.props.setErrorMsg(
+                this.props.customErrors.noOptionFound || 'Please select or enter valid text for filtering',
+                true
+            );
             return false;
         }
 
+        this.props.setErrorMsg(false);
         return result;
     },
 
@@ -110,7 +120,7 @@ var Typeahead = onClickOutside(createReactClass({
         }
 
         // There are no typeahead / autocomplete suggestions
-        if (!this.state.visible.length) {
+        if (this.state.visible === false) {
             return "";
         }
 
@@ -118,11 +128,16 @@ var Typeahead = onClickOutside(createReactClass({
             <TypeaheadSelector
                 ref="sel" options={ this.state.visible } header={this.state.header}
                 onOptionSelected={ this._onOptionSelected }
-                customClasses={this.props.customClasses} />
+                customClasses={this.props.customClasses}
+                errorMsg={this.props.errorMsg}
+            />
         );
     },
 
     _onOptionSelected: function(option) {
+        if (!option) {
+            return;
+        }
         //var nEntry = this.refs.entry.getDOMNode();
         var nEntry = this.refs['entry'];
         nEntry.focus();
@@ -143,11 +158,9 @@ var Typeahead = onClickOutside(createReactClass({
             //value = this.refs.entry.getDOMNode().value;
             value = this.refs['entry'].value;
         }
-        if (this.getOptionsForValue(value, this.state.options) === false) {
-            this.refs['entry'].value = value.substring(0, value.length-1);
-            return;
-        }
-        this.setState({visible: this.getOptionsForValue(value, this.state.options),
+        var visible = this.getOptionsForValue(value, this.state.options);
+        var empty = !visible || visible.length === 0;
+        this.setState({visible: this.state.options.length === 0 && empty ? false : (visible || []),
             selection: null,
             entryValue: value});
     },

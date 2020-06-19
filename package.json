@@ -38,6 +38,7 @@
     "reactify": "git://github.com/andreypopp/reactify.git#v0.16.0",
     "reqwest": "*",
     "tether": "*",
+    "underscore": "^1.10.2",
     "vinyl-source-stream": "*",
     "watchify": "*"
   },
