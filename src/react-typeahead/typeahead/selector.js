@@ -13,6 +13,7 @@ var TypeaheadSelector = createReactClass({
         options: PropTypes.array,
         header: PropTypes.string,
         customClasses: PropTypes.object,
+        errorMsg: PropTypes.string,
         selectionIndex: PropTypes.number,
         onOptionSelected: PropTypes.func
     },
@@ -43,6 +44,12 @@ var TypeaheadSelector = createReactClass({
         classes[this.props.customClasses.results] = this.props.customClasses.results;
         //var classList = React.addons.classSet(classes);
         var classList = cx(classes);
+        var showErrorMsg = null;
+        if (this.props.errorMsg) {
+            showErrorMsg = (
+                <li className="error">{this.props.errorMsg}</li>
+            );
+        }
 
         var results = this.props.options.map(function(result, i) {
             return (
@@ -56,6 +63,7 @@ var TypeaheadSelector = createReactClass({
         }, this);
         return <ul className={classList}>
           <li className="header">{this.props.header}</li>
+            { showErrorMsg }
             { results }
         </ul>;
     },
