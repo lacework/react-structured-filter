@@ -81,6 +81,10 @@ var TypeaheadTokenizer = createReactClass({
             }
             return categories;
         } else if (this.state.operator=="") {
+            var operators = this._getCategoryOperators();
+            if (operators && operators.length) {
+                return operators;
+            }
             let categoryType = this._getCategoryType();
             if (categoryType == "String" || categoryType == "ipaddr" || categoryType == "Number") { return ["matches", "includes", "excludes", "starts with", "ends with", "does not match"]; }
             else if(categoryType == "keyValue") {return ["matches", "does not match"];}
@@ -114,6 +118,14 @@ var TypeaheadTokenizer = createReactClass({
             if (this.props.options[i].category == this.state.category) {
                 let categoryType = this.props.options[i].type;
                 return categoryType;
+            }
+        }
+    },
+
+    _getCategoryOperators: function () {
+        for (var i = 0; i < this.props.options.length; i++) {
+            if (this.props.options[i].category == this.state.category) {
+                return this.props.options[i].operators;
             }
         }
     },
