@@ -1,9 +1,14 @@
 {
-  "name": "react-structured-filter",
+  "name": "@lacework/react-structured-filter-fork",
   "version": "1.0.0",
   "description": "",
-  "main": "gulpfile.js",
-  "dependencies": {
+  "main": "dist/react-structured-filter.js",
+  "peerDependencies": {
+    "react": ">=16.2.0",
+    "react-dom": ">=16.2.0",
+    "underscore": "^1.10.2"
+  },
+  "devDependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.26.3",
@@ -40,14 +45,12 @@
     "tether": "*",
     "underscore": "^1.10.2",
     "vinyl-source-stream": "*",
-    "watchify": "*"
-  },
-  "devDependencies": {
+    "watchify": "*",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack"
   },
   "author": "Summit Route LLC",
   "license": "BSD"

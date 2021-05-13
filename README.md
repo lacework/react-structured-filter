@@ -1,3 +1,27 @@
+Lacework fork of react-structured-filter@1.0.0
+=============
+
+# Releasing
+This could be a single script in package.json, but I figured being explicit is better to catch issues. And we will
+probably never release another version.
+
+Build for production
+```
+npm run build
+```
+
+Bump the version number. This uses the preid format so we have an obvious link to the source docs and code if neede
+```
+npm version prerelease --no-git-tag-version
+```
+
+Publish
+```
+npm publish --access public --tag latest
+```
+
+Commit and push changes to package-lock.json and package.json
+
 
 # react-structured-filter (unmaintained)
 react-structured-filter is a javascript library that provides autocomplete faceted search queries.  
