@@ -6,11 +6,10 @@ module.exports = {
     devtool: 'source-map',
     mode: 'none',
     output: {
-        path: __dirname,
+        path: path.resolve('dist'),
         filename: 'react-structured-filter.js',
         library: 'react-structured-filter',
-        libraryTarget: 'umd',
-        umdNamedDefine: true,
+        libraryTarget: 'commonjs2',
     },
     module: {
         rules: [
